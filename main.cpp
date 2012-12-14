@@ -8,6 +8,8 @@
 #include "GL/glext.h"
 #include <iostream>
 #include <cmath>
+#include <list>
+#include "Particles.h"
 
 using namespace std;
 using namespace sf;
@@ -349,6 +351,7 @@ bool Player::collides(float x, float y, float z)
 	return false;
 }
 
+list<Particle> particles;
 
 int main(int argc, char** argv)
 {
@@ -367,11 +370,11 @@ int main(int argc, char** argv)
     glEnable(GL_NORMALIZE);
     glEnable(GL_TEXTURE_2D);
 
-/*    glEnable(GL_BLEND);
+    glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_EQUAL, 1.0f);
-*/	    
+//	glEnable(GL_ALPHA_TEST);
+//	glAlphaFunc(GL_EQUAL, 0.0f);
+	
 //    glDepthMask(GL_TRUE);
 
 	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -390,38 +393,19 @@ int main(int argc, char** argv)
 	Texture crateTex, playerTex;
 	crateTex.loadFromFile("crate.jpg");
 	playerTex.loadFromFile("player.jpg");
-
-	/*
-	for(int y = 0; y < SIZE; y++)
-		for(int x = 0; x < SIZE; x++)
-			for(int z = 0; z < SIZE; z++)
-			{
-				int dx = x-SIZE/2; if(dx < 0) dx = -dx-1;
-				int dy = y-SIZE/2; if(dy < 0) dy = -dy-1;
-//				dy = SIZE/2-dy;
-				int dz = z-SIZE/2; if(dz < 0) dz = -dz-1;
-				if(dx + dy + dz < 9)
-					world[x][y][z] = 1;
-			}
-			*/
+	
 	srand(time(NULL));
 	
 	for(int y = 0; y < SIZE; y++)
 		for(int x = 0; x < SIZE; x++)
 			for(int z = 0; z < SIZE; z++)
-				world[x][y][z] = (rand() % 4) == 0;
-				
-/*	for(int x = 0; x < SIZE; x++)
-		for(int z = 0; z < SIZE; z++)
-		{
-			world[x][0][z] = 1;
-			if(x == 0 || x == SIZE-1 || z == 0 || z == SIZE-1)
-				world[x][1][z] = 1;
-		}*/
+				world[x][y][z] = (rand() % 10) == 0;
 	
 	buildArrays();
 	cout<<"QuadCount "<<quadCount<<endl;
 	makeVbo();
+	
+	initParticles();
 	
 	Player p;
     // Start game loop
@@ -473,13 +457,28 @@ int main(int argc, char** argv)
         if(Keyboard::isKeyPressed(Keyboard::Down)) roty += rotspeed;
 		p.update(deltaTime);
 		
-
+		Particle pt;
+		pt.p.x = p.x;
+		pt.p.y = p.y;
+		pt.p.z = p.z;
+		particles.push_back(pt);
+		cout<<particles.size()<<endl;
+		
+		for(list<Particle>::iterator it = particles.begin(); it  != particles.end(); it++)
+			it->update(deltaTime);
+		setCameraVec(rotx, roty);
+		
         glRotatef(roty, 1.f, 0.f, 0.f);
         glRotatef(rotx, 0.f, 1.f, 0.f);
 //		glTranslatef(-SIZE/2, -SIZE/2, -SIZE/2);
 		glTranslatef(-p.x, -p.y, -p.z);
 
+
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glEnable(GL_CULL_FACE);
 		glColor3f(1, 1, 1);
+
 
 		//Bind texture
 		crateTex.bind();
@@ -500,7 +499,8 @@ int main(int argc, char** argv)
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-		
+
+		glPushMatrix();
 		glTranslatef(p.x, p.y, p.z);
 		glScalef(0.5*p.size, 0.5*p.size, 0.5*p.size);
 		glColor3f(1, 1, 1);
@@ -521,6 +521,43 @@ int main(int argc, char** argv)
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glPopMatrix();
+
+
+
+		glPushMatrix();
+		glTranslatef(p.x+cameraVec.x, p.y+cameraVec.y, p.z+cameraVec.z);
+		glScalef(0.5*p.size, 0.5*p.size, 0.5*p.size);
+		glColor3f(1, 1, 1);
+		playerTex.bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		//Set the vertex and color pointers
+		glVertexPointer(3, GL_FLOAT, 0, cubeVert);
+		glNormalPointer(GL_FLOAT, 0, cubeNormals);
+		glTexCoordPointer(2, GL_FLOAT, 0, cubeTexcoords);
+
+		//Draw the cube using the previously specified vertices & colors, and the specified cube indices
+		glDrawArrays(GL_QUADS, 0, 24);
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glPopMatrix();
+
+
+		
+		glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHT0);
+		glDisable(GL_CULL_FACE);
+		
+		//SORT DA PARTICLES!!!
+		particles.sort();
+		for(list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
+			it->render();
 
 		// Finally, display rendered frame on screen
         app.display();
