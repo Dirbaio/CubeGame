@@ -11,11 +11,16 @@ class Particle {
 	vec3 p;
 	vec3 v;
 	vec3 a;
-	float size;
+
+	float life, startingLife;
+	
+	float startSize, endSize;
+	vec3 startCol, endCol;
+	float startAlpha, endAlpha;
 	
 	Particle();
 	void render();
-	void update(float dt);
+	void update();
 	
 	float getZOrder() const;
 };

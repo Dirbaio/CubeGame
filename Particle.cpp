@@ -1,4 +1,4 @@
-#include "Particles.h"
+#include "Particle.h"
 
 static float texcoords[4][2] = {
 	{0, 0},
@@ -30,8 +30,17 @@ void initParticles()
 
 Particle::Particle()
 {
-	size = 0.2;
-	v = vec3(frand(0.2), 1, frand(0.2));
+	life = 1;
+	startingLife = 1;
+	
+	startSize = 0.3;
+	endSize = 2;
+	startCol = vec3(1, 0, 0);
+	endCol = vec3(0,1, 1);
+	startAlpha = 1;
+	endAlpha = 0;
+	
+	v = vec3(frand(1.2), 4, frand(1.2));
 }
 
 void set(float* a, vec3 b)
@@ -43,6 +52,10 @@ void set(float* a, vec3 b)
 
 void Particle::render()
 {
+	float size = (startSize * (life) + endSize*(startingLife - life)) / startingLife;
+	float alpha = (startAlpha * (life) + endAlpha*(startingLife - life)) / startingLife;
+	vec3 col = (startCol * (life) + endCol*(startingLife - life)) / startingLife;
+
 	vec3 dx = cross(cameraVec, vec3(0, 1, 0));
 	vec3 dy = cross(dx, cameraVec);
 	normalize(dx);
@@ -56,7 +69,7 @@ void Particle::render()
 	
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
-	glColor3f(1, 1, 1);
+	glColor4f(col.x, col.y, col.z, alpha);
 	particleTex.bind();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -71,10 +84,11 @@ void Particle::render()
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void Particle::update(float dt)
+void Particle::update()
 {
 	v += a*dt;
 	p += v*dt;
+	life -= dt;
 }
 
 float Particle::getZOrder() const 

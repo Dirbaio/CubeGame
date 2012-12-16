@@ -9,7 +9,9 @@
 #include <iostream>
 #include <cmath>
 #include <list>
-#include "Particles.h"
+#include "Particle.h"
+#include "Actor.h"
+#include "Scene.h"
 
 using namespace std;
 using namespace sf;
@@ -351,7 +353,10 @@ bool Player::collides(float x, float y, float z)
 	return false;
 }
 
-list<Particle> particles;
+//Defined as extern in util.h
+float dt;
+float tim = 0;
+Scene* sc;
 
 int main(int argc, char** argv)
 {
@@ -408,6 +413,11 @@ int main(int argc, char** argv)
 	initParticles();
 	
 	Player p;
+	float frameTime = 0;
+	int frameCount = 0;
+	
+	sc = new Scene();
+	
     // Start game loop
     while (app.isOpen())
     {
@@ -448,24 +458,32 @@ int main(int argc, char** argv)
         glLoadIdentity();
         glTranslatef(0.f, 0.f, -SIZE/4);
         
-        float deltaTime = clock.getElapsedTime().asSeconds();
-        float rotspeed = 180*deltaTime;
+       	dt = clock.getElapsedTime().asSeconds();
+        tim += dt;
         clock.restart();
+
+        frameTime += dt;
+        frameCount++;
+        
+        if(frameTime >= 1)
+        {
+        	cout<<"FPS "<<frameCount/frameTime<<", Particles "<<sc->particles.size()<<endl;
+        	frameTime = 0;
+        	frameCount = 0;
+        }
+        
+        float rotspeed = 180*dt;
         if(Keyboard::isKeyPressed(Keyboard::Left)) rotx -= rotspeed;
         if(Keyboard::isKeyPressed(Keyboard::Right)) rotx += rotspeed;
         if(Keyboard::isKeyPressed(Keyboard::Up)) roty -= rotspeed;
         if(Keyboard::isKeyPressed(Keyboard::Down)) roty += rotspeed;
-		p.update(deltaTime);
+		p.update(dt);
 		
-		Particle pt;
-		pt.p.x = p.x;
-		pt.p.y = p.y;
-		pt.p.z = p.z;
-		particles.push_back(pt);
-		cout<<particles.size()<<endl;
+		sc->update();
 		
-		for(list<Particle>::iterator it = particles.begin(); it  != particles.end(); it++)
-			it->update(deltaTime);
+//		cout<<particles.size()<<endl;
+		
+		
 		setCameraVec(rotx, roty);
 		
         glRotatef(roty, 1.f, 0.f, 0.f);
@@ -523,8 +541,6 @@ int main(int argc, char** argv)
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glPopMatrix();
 
-
-
 		glPushMatrix();
 		glTranslatef(p.x+cameraVec.x, p.y+cameraVec.y, p.z+cameraVec.z);
 		glScalef(0.5*p.size, 0.5*p.size, 0.5*p.size);
@@ -548,17 +564,8 @@ int main(int argc, char** argv)
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glPopMatrix();
 
-
+		sc->render();
 		
-		glDisable(GL_LIGHTING);
-		glDisable(GL_LIGHT0);
-		glDisable(GL_CULL_FACE);
-		
-		//SORT DA PARTICLES!!!
-		particles.sort();
-		for(list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
-			it->render();
-
 		// Finally, display rendered frame on screen
         app.display();
     }

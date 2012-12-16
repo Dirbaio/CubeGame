@@ -1,3 +1,5 @@
+#ifndef _UTIL_H
+#define _UTIL_H
 
 #define GL_GLEXT_PROTOTYPES 1
 
@@ -49,3 +51,9 @@ inline float toRad(float deg)
 {
 	return deg/180.0*M_PI;
 }
+
+//DELTA TIME!
+extern float dt;
+extern float tim;
+
+#endif
