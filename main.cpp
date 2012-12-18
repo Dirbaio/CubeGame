@@ -107,7 +107,7 @@ int main(int argc, char** argv)
 		frameTime += dt;
 		frameCount++;
 
-		if(frameTime >= 1)
+		if(frameTime >= 5)
 		{
 			cout<<"FPS "<<frameCount/frameTime<<", Particles "<<sc->particles.size()<<endl;
 			frameTime = 0;

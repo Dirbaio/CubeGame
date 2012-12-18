@@ -62,10 +62,10 @@ float zFar = 1000;
 void Scene::render()
 {
 	//TODO Put this somewhere else?
-	glMatrixMode(GL_PROJECTION);
+/*	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(65.0, (float)width/(float)height, zNear, zFar);
-
+*/
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 //	glTranslatef(0, -100, 0);

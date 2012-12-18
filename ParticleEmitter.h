@@ -10,13 +10,29 @@ class ParticleEmitter
 	public:
 	Actor* act;
 
-	Particle p;
-	float period;
-	float state;
+	vec3 v;
+	vec3 a;
+
+	float life;
 	
-	ParticleEmitter(Actor* act, const Particle& p);
+	float startSize, endSize;
+	vec3 startCol, endCol;
+	float startAlpha, endAlpha;
+
+	float period;
 	ParticleEmitter(Actor* act);
 	void update();
+
+	void setOn();
+	void turnOnFor(float time);
+
+	private:
+	void spawnParticle();
+	
+	float state;
+	float disableTimer; //-1 if no timer
+	bool enabled;
+	
 };
 
 #endif

@@ -32,8 +32,9 @@ float cubeTexcoords[24][2] = {
 FireActor::FireActor(MinecraftScene* sc) : Actor(sc)
 {
 	this->msc = sc;
-	Particle pt;
-	emitters.push_back(ParticleEmitter(this, pt));
+
+	ParticleEmitter pe (this);
+	emitters.push_back(pe);
 	
 	playerTex = loadTexture("player.jpg");
 	p = vec3(SIZE/2,SIZE+1,SIZE/2);
@@ -121,7 +122,8 @@ void FireActor::update()
 	if(Keyboard::isKeyPressed(Keyboard::Down)) roty += rotspeed;
 	if(roty > 1.3) roty = 1.3;
 	if(roty < -1.3) roty = -1.3;
-	//CAMERA, FOLLOW ME YOU MADAFACKA
+
+	//CAMERA, FOLLOW ME MADAFACKA
 	sc->cameraLookAt = p;
 	vec3 dc (-sin(rotx), 0, cos(rotx));
 	dc.x *= cos(roty);
