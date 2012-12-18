@@ -14,7 +14,7 @@ class Actor
 	list<ParticleEmitter> emitters;
 	Scene* sc;
 	
-	vec3 p;
+	vec3 p, v;
 	
 	Actor(Scene* sc);
 

@@ -25,7 +25,7 @@ class Particle {
 	float getZOrder() const;
 };
 
-void setCameraVec(float xrot, float yrot);
+void setCameraVec(vec3 cv);
 inline bool operator<(const Particle& a, const Particle& b)
 {
 	return a.getZOrder() > b.getZOrder();

@@ -56,4 +56,5 @@ inline float toRad(float deg)
 extern float dt;
 extern float tim;
 
+extern Texture* loadTexture(string path);
 #endif

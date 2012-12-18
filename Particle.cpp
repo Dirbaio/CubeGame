@@ -10,16 +10,9 @@ static float texcoords[4][2] = {
 static float vtxcoords[4][3];
 vec3 cameraVec;
 
-void setCameraVec(float rotx, float roty)
+void setCameraVec(vec3 cv)
 {
-	rotx = toRad(rotx);
-	roty = toRad(roty);
-	
-	cameraVec.x = sin(rotx)*cos(roty);
-	cameraVec.y = -sin(roty);
-	cameraVec.z = -cos(rotx)*cos(roty);
-	
-	normalize(cameraVec);
+	cameraVec = cv;
 }
 
 Texture particleTex;
