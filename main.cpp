@@ -81,11 +81,17 @@ int main(int argc, char** argv)
         {
             // Close window : exit
             if (event.type == sf::Event::Closed)
+            {
                 app.close();
+                return 0;
+            }
 
             // Escape key : exit
             if ((event.type == sf::Event::KeyPressed) && (event.key.code == Keyboard::Escape))
+            {
                 app.close();
+                return 0;
+            }
 
             // Resize event : adjust viewport
             if (event.type == sf::Event::Resized)
