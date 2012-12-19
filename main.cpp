@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 {
     // Create the main window
     sf::Window app(sf::VideoMode(800, 600, 32), "SFML OpenGL");
-	app.setVerticalSyncEnabled(true);
+//	app.setVerticalSyncEnabled(true);
 	
     // Create a clock for measuring time elapsed
     sf::Clock clock;
@@ -50,6 +50,8 @@ int main(int argc, char** argv)
 //	glAlphaFunc(GL_EQUAL, 0.0f);
 	
 //    glDepthMask(GL_TRUE);
+//	glDepthFunc(GL_LEQUAL);
+//	glPolygonOffset(-10000, -10000);
 
 	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat mat_shininess[] = { 50.0 };
@@ -65,8 +67,6 @@ int main(int argc, char** argv)
 	glEnable(GL_CULL_FACE);
 
 	srand(time(NULL));
-	
-	initParticles();
 	
 	float frameTime = 0;
 	int frameCount = 0;
@@ -126,7 +126,13 @@ int main(int argc, char** argv)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		sc->render();
+
+		glEnable (GL_BLEND);
+		glDepthMask (GL_FALSE);
 		sc->renderParticles();
+		glDepthMask (GL_TRUE);
+		glDisable (GL_BLEND);
+
 		
         app.display();
     }

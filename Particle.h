@@ -3,8 +3,6 @@
 
 #include "util.h"
 
-void initParticles();
-
 class Particle {
 	public:
 	
@@ -21,7 +19,7 @@ class Particle {
 	Particle();
 	void render();
 	void update();
-	
+	void renderArray(vector<vec3>& vtxArray, vector<vec2>& texArray, vector<color>& colArray);
 	float getZOrder() const;
 };
 

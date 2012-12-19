@@ -3,18 +3,39 @@
 #include "Actor.h"
 #include "Scene.h"
 
+RandomVec::RandomVec()
+{
+	rad = 0;
+}
+
+RandomVec::RandomVec(float rad)
+{
+	this->rad = rad;
+}
+
+vec3 RandomVec::get()
+{
+	float angle = frand(2*M_PI);
+	float z = frand(1);
+	float mult = sqrt(1-z*z);
+	return vec3(cos(angle)*mult*rad, sin(angle)*mult*rad, z*rad);
+}
+
 ParticleEmitter::ParticleEmitter(Actor* act)
 {
 	this->act = act;
 	
 	//Defaults
-	this->period = 1/600.0f;
-	
+	this->period = 1/6000.0f;
+	randPos.rad = 1;
+	randVel.rad = 0;
 	life = 1;
-	startSize = 0.4; endSize = 0;
-	startAlpha = 1; endAlpha = 0;
+	randLife = 0.5;
+	startSize = 0.4; endSize = 0.2;
+	startAlpha = 0; endAlpha = 1;
 	startCol = vec3(0, 0, 1);
-	endCol = vec3(1, 0, 0);
+	endCol = vec3(0, 0, 0);
+	actorVelMult = -2;
 	
 	//Private stuff
 	this->state = 0;
@@ -45,10 +66,11 @@ void ParticleEmitter::spawnParticle()
 {
 	//TODO Advance particle by needed delta time?
 	Particle pt;
-	pt.p = act->p;
-	pt.v = act->v*2.0f;
+	pt.p = act->p + randPos.get();
+	pt.v = v + act->v*actorVelMult + randVel.get();
 	pt.a = a;
-	pt.life = life;
+
+	pt.life = life + frand(randLife);
 	pt.startingLife = pt.life;
 	pt.startSize = startSize;
 	pt.endSize = endSize;

@@ -5,16 +5,33 @@
 
 class Actor;
 
+class RandomVec
+{
+	public:
+	
+	float rad;
+	RandomVec();
+	RandomVec(float rad);
+	
+	vec3 get();
+};
+
 class ParticleEmitter
 {
 	public:
 	Actor* act;
 
+	RandomVec randPos;
+
 	vec3 v;
+	float actorVelMult;
+	RandomVec randVel;
+
 	vec3 a;
 
 	float life;
-	
+	float randLife;
+		
 	float startSize, endSize;
 	vec3 startCol, endCol;
 	float startAlpha, endAlpha;

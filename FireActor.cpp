@@ -35,10 +35,12 @@ FireActor::FireActor(MinecraftScene* sc) : Actor(sc)
 
 	ParticleEmitter pe (this);
 	emitters.push_back(pe);
+	timeSinceGround = 10;
 	
 	playerTex = loadTexture("player.jpg");
 	p = vec3(SIZE/2,SIZE+1,SIZE/2);
 	size = 0.7;
+	rotx = roty = 0;
 }
 
 bool FireActor::move(vec3 d)
@@ -121,8 +123,9 @@ void FireActor::update()
 	if(Keyboard::isKeyPressed(Keyboard::Right)) rotx += rotspeed;
 	if(Keyboard::isKeyPressed(Keyboard::Up)) roty -= rotspeed;
 	if(Keyboard::isKeyPressed(Keyboard::Down)) roty += rotspeed;
-	if(roty > 1.3) roty = 1.3;
-	if(roty < -1.3) roty = -1.3;
+	float RMAX = 1.55;
+	if(roty > RMAX) roty = RMAX;
+	if(roty < -RMAX) roty = -RMAX;
 
 	//CAMERA, FOLLOW ME MADAFACKA
 	sc->cameraLookAt = p;
@@ -130,7 +133,7 @@ void FireActor::update()
 	dc.x *= cos(roty);
 	dc.y = sin(roty);
 	dc.z *= cos(roty);
-	sc->cameraPos = p+dc*6.0f;
+	sc->cameraPos = p+dc*4.0f;
 }
 
 bool FireActor::collides(vec3 z)

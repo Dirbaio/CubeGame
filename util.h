@@ -16,6 +16,11 @@ using namespace std;
 using namespace sf;
 
 typedef Vector3<float> vec3;
+typedef Vector2<float> vec2;
+
+struct color {
+	float r, g, b, a;
+};
 
 //Dot product
 inline float dot(const vec3& a, const vec3& b)

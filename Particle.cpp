@@ -15,12 +15,6 @@ void setCameraVec(vec3 cv)
 	cameraVec = cv;
 }
 
-Texture particleTex;
-void initParticles()
-{
-	particleTex.loadFromFile("particle.png");
-}
-
 Particle::Particle()
 {
 	life = 1;
@@ -63,7 +57,6 @@ void Particle::render()
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
 	glColor4f(col.x, col.y, col.z, alpha);
-	particleTex.bind();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -75,6 +68,40 @@ void Particle::render()
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void Particle::renderArray(vector<vec3>& vtxArray, vector<vec2>& texArray, vector<color>& colArray)
+{
+	float size = (startSize * (life) + endSize*(startingLife - life)) / startingLife;
+	float alpha = (startAlpha * (life) + endAlpha*(startingLife - life)) / startingLife;
+	vec3 col = (startCol * (life) + endCol*(startingLife - life)) / startingLife;
+	color colr;
+	colr.r = col.x;
+	colr.g = col.y;
+	colr.b = col.z;
+	colr.a = alpha;
+	
+	vec3 dx = cross(cameraVec, vec3(0, 1, 0));
+	vec3 dy = cross(dx, cameraVec);
+	normalize(dx);
+	normalize(dy);
+	dx *= size;
+	dy *= size;
+
+	vtxArray.push_back(p+dx+dy);
+	vtxArray.push_back(p+dx-dy);
+	vtxArray.push_back(p-dx-dy);
+	vtxArray.push_back(p-dx+dy);
+	
+	texArray.push_back(vec2(0, 0));
+	texArray.push_back(vec2(1, 0));
+	texArray.push_back(vec2(1, 1));
+	texArray.push_back(vec2(0, 1));
+	
+	colArray.push_back(colr);
+	colArray.push_back(colr);
+	colArray.push_back(colr);
+	colArray.push_back(colr);
 }
 
 void Particle::update()

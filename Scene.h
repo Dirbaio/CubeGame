@@ -17,6 +17,8 @@ public:
 	list<Particle> particles;
 	list<Actor*> actors;
 	
+	Texture particleTex;
+
 	Scene();
 	~Scene();
 	virtual void update();

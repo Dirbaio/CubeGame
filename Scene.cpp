@@ -6,6 +6,7 @@ Scene::Scene()
 	actors.push_back(new Actor(this));
 	cameraLookAt = vec3(0, 0, 0);
 	cameraPos = vec3(10, 10, 10);
+	particleTex.loadFromFile("particle.png");
 }
 
 Scene::~Scene()
@@ -82,6 +83,10 @@ void Scene::render()
 		(*it)->render();
 }
 
+vector<vec3> vtxArray;
+vector<vec2> texArray;
+vector<color> colArray;
+
 void Scene::renderParticles()
 {
 
@@ -93,8 +98,42 @@ void Scene::renderParticles()
 	particles.sort();
 	
 	//Render them!
+	
+	particleTex.bind();
+
+/*	//Old way
 	for(list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
 		it->render();
+	*/
+	
+	vtxArray.resize(0);
+	texArray.resize(0);
+	colArray.resize(0);
+	
+	vtxArray.reserve(particles.size()*4);
+	texArray.reserve(particles.size()*4);
+	colArray.reserve(particles.size()*4);
+	
+	for(list<Particle>::iterator it = particles.begin(); it != particles.end(); it++)
+		it->renderArray(vtxArray, texArray, colArray);
+
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, 0, &vtxArray[0]);
+	glTexCoordPointer(2, GL_FLOAT, 0, &texArray[0]);
+	glColorPointer(4, GL_FLOAT, 0, &colArray[0]);
+	
+/*	cout<<vtxArray.size()<<endl;
+	cout<<texArray.size()<<endl;*/
+	glDrawArrays(GL_QUADS, 0, vtxArray.size());
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
 }
 
 void Scene::addParticle(const Particle& p) 
