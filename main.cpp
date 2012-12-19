@@ -30,7 +30,8 @@ int main(int argc, char** argv)
 {
     // Create the main window
     sf::Window app(sf::VideoMode(800, 600, 32), "SFML OpenGL");
-
+	app.setVerticalSyncEnabled(true);
+	
     // Create a clock for measuring time elapsed
     sf::Clock clock;
 
@@ -107,8 +108,8 @@ int main(int argc, char** argv)
         app.setActive();
 
 		dt = clock.getElapsedTime().asSeconds();
-		tim += dt;
 		clock.restart();
+		tim += dt;
 
 		frameTime += dt;
 		frameCount++;

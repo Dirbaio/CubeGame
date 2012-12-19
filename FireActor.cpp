@@ -103,6 +103,8 @@ void FireActor::update()
 		v.y=+12;
 		timeSinceGround = 1000;
 	}
+
+	v.y -= 36*dt;
 	
 	if(!move(vec3(v.x*dt, 0, 0))) v.x = 0;
 	if(!move(vec3(0, v.y*dt, 0)))
@@ -113,7 +115,6 @@ void FireActor::update()
 	}
 	if(!move(vec3(0, 0, v.z*dt))) v.z = 0;
 
-	v.y -= 36*dt;
 	
 	float rotspeed = 3*dt;
 	if(Keyboard::isKeyPressed(Keyboard::Left)) rotx -= rotspeed;
